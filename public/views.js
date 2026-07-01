@@ -1,4 +1,4 @@
-// FicheDéputé.fr — view renderers. All dynamic values pass through STD.esc().
+// FicheSénateur.fr — view renderers. All dynamic values pass through STD.esc().
 const V = (STD.views = {});
 const t = STD.t, esc = STD.esc;
 
@@ -50,7 +50,7 @@ function wireSearch(input, box) {
 
 // ── HOME ──────────────────────────────────────────────────────────────────
 V.home = async (root) => {
-  setMeta("FicheDéputé.fr — " + t("meta.tagline"), t("meta.sub"), "https://senat.fichedepute.fr/");
+  setMeta("FicheSénateur.fr — " + t("meta.tagline"), t("meta.sub"), "https://senat.fichedepute.fr/");
   const stats = await STD.getJSON("/api/stats");
   const groupes = (await STD.getJSON("/api/groupes")).groupes;
   const meta = await STD.getJSON("/api/meta");
@@ -102,7 +102,7 @@ V.home = async (root) => {
             <div class="who"><div class="nm">${esc(g.sigle)} <span style="color:var(--muted);font-weight:500">· ${esc(g.libelle)}</span></div>
               <div class="bar"><i style="width:${g.participationMoyenne}%;background:${esc(g.color)}"></i></div></div>
             <span class="val">${g.participationMoyenne}%</span>
-            <span class="sub" style="color:var(--muted);font-size:12.5px;width:56px;text-align:right">${g.n} dép.</span>
+            <span class="sub" style="color:var(--muted);font-size:12.5px;width:56px;text-align:right">${g.n} sén.</span>
           </div>`).join("")}
       </div>
     </div></section>
@@ -115,7 +115,7 @@ V.home = async (root) => {
 
 // ── LIST ──────────────────────────────────────────────────────────────────
 V.list = async (root) => {
-  setMeta(t("list.title") + " — FicheDéputé.fr", t("meta.sub"), "https://senat.fichedepute.fr/deputes");
+  setMeta(t("list.title") + " — FicheSénateur.fr", t("meta.sub"), "https://senat.fichedepute.fr/deputes");
   const { deputes } = await STD.getJSON("/api/deputes");
   const groups = [...new Set(deputes.map((d) => d.groupe))].sort();
   const deps = [...new Map(deputes.filter((d) => d.dep).map((d) => [d.dep, d.depNom])).entries()]
@@ -174,7 +174,7 @@ V.fiche = async (root, m) => {
   const g = d.groupe || { sigle: "NI", color: "#8a8f98", libelle: "Non inscrit" };
   const eur = (n) => n.toLocaleString(STD.lang, { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
   const name = `${d.prenom} ${d.nom}`;
-  setMeta(`${name} — FicheDéputé.fr`,
+  setMeta(`${name} — FicheSénateur.fr`,
     `${name} (${g.sigle}) : ${d.presenceRate}% de participation aux scrutins publics. ${d.nPresent} scrutins sur ${d.nEligible}.`,
     "https://senat.fichedepute.fr/depute/" + d.slug);
   const ogimg = document.querySelector('meta[property="og:image"]');
@@ -248,6 +248,20 @@ V.fiche = async (root, m) => {
             ${d.hasAmendements ? `<div class="act"><b>${d.activite.amendements}</b><span>${esc(t("fiche.activite.amdt"))}</span><em>${esc(t("fiche.activite.amdtAdopt", { n: d.activite.amendementsAdoptes }))}</em></div>` : ""}
           </div>
         </div>` : ""}
+        ${d.hatvpDecl ? `<div class="card side-card">
+          <h3>⚖ ${esc(t("fiche.hatvp"))}</h3>
+          <div class="act-grid">
+            <div class="act"><b>${d.hatvpDecl.activitesProf}</b><span>${esc(t("hatvp.activites"))}</span></div>
+            <div class="act"><b>${d.hatvpDecl.participationsFinancieres}</b><span>${esc(t("hatvp.finance"))}</span></div>
+            <div class="act"><b>${d.hatvpDecl.participationsDirigeant}</b><span>${esc(t("hatvp.dirigeant"))}</span></div>
+          </div>
+          ${(d.hatvpDecl.consultant || d.hatvpDecl.benevole || d.hatvpDecl.activiteConjoint) ? `<div class="hatvp-flags">
+            ${d.hatvpDecl.consultant ? `<span class="chip">${esc(t("hatvp.consultant"))}</span>` : ""}
+            ${d.hatvpDecl.benevole ? `<span class="chip">${esc(t("hatvp.benevole"))}</span>` : ""}
+            ${d.hatvpDecl.activiteConjoint ? `<span class="chip">${esc(t("hatvp.conjoint"))}</span>` : ""}
+          </div>` : ""}
+          <a class="salary-src" href="${esc(d.hatvp || d.hatvpDecl.url)}" target="_blank" rel="noopener">${esc(t("hatvp.voir"))} ↗</a>
+        </div>` : ""}
         ${indem && indem.brutMensuel ? `<div class="card side-card salary-card">
           <h3>💶 ${esc(t("fiche.salary"))}</h3>
           <div class="salary-amount">${esc(eur(indem.brutMensuel))}<span class="salary-unit"> ${esc(t("fiche.salary.brut"))}</span></div>
@@ -278,7 +292,7 @@ V.fiche = async (root, m) => {
   });
   root.querySelector("#share").addEventListener("click", async () => {
     const url = location.href;
-    const shareData = { title: `${name} — FicheDéputé.fr`, text: `${name} : ${d.participationRate}% de participation aux scrutins.`, url };
+    const shareData = { title: `${name} — FicheSénateur.fr`, text: `${name} : ${d.participationRate}% de participation aux scrutins.`, url };
     if (navigator.share) { try { await navigator.share(shareData); } catch (e) {} }
     else { try { await navigator.clipboard.writeText(url); STD.toast(t("fiche.shared")); } catch (e) {} }
   });
@@ -286,7 +300,7 @@ V.fiche = async (root, m) => {
 
 // ── RANKINGS ──────────────────────────────────────────────────────────────
 V.rankings = async (root) => {
-  setMeta(t("rank.title") + " — FicheDéputé.fr", t("meta.sub"), "https://senat.fichedepute.fr/classements");
+  setMeta(t("rank.title") + " — FicheSénateur.fr", t("meta.sub"), "https://senat.fichedepute.fr/classements");
   const stats = await STD.getJSON("/api/stats");
   // colorMode: "score" → green/amber/red by value; "group" → the deputy's group colour
   const tbl = (title, arr, field, colorMode = "score") => `
@@ -313,7 +327,7 @@ V.rankings = async (root) => {
 
 // ── GAME · Devine le député (normal = 4 choix · expert = saisie libre) ─────
 V.game = async (root) => {
-  setMeta(t("game.title") + " — FicheDéputé.fr", t("game.lead"), "https://senat.fichedepute.fr/jeu");
+  setMeta(t("game.title") + " — FicheSénateur.fr", t("game.lead"), "https://senat.fichedepute.fr/jeu");
   const MODES = ["normal", "expert"];
   let mode = MODES.includes(localStorage.getItem("fd_game_mode")) ? localStorage.getItem("fd_game_mode") : "normal";
   const bestKey = () => "fd_game_best_" + mode;
@@ -468,7 +482,7 @@ V.game = async (root) => {
 
 // ── GROUPS ────────────────────────────────────────────────────────────────
 V.groups = async (root) => {
-  setMeta(t("groups.title") + " — FicheDéputé.fr", t("meta.sub"), "https://senat.fichedepute.fr/groupes");
+  setMeta(t("groups.title") + " — FicheSénateur.fr", t("meta.sub"), "https://senat.fichedepute.fr/groupes");
   const { groupes } = await STD.getJSON("/api/groupes");
   root.innerHTML = `<section class="block fade-in"><div class="wrap">
     <div class="sec-head"><h2>${esc(t("groups.title"))}</h2></div>
@@ -489,7 +503,7 @@ V.groups = async (root) => {
 
 // ── METHODO ───────────────────────────────────────────────────────────────
 V.methodo = async (root) => {
-  setMeta(t("methodo.title") + " — FicheDéputé.fr", t("meta.sub"), "https://senat.fichedepute.fr/methode");
+  setMeta(t("methodo.title") + " — FicheSénateur.fr", t("meta.sub"), "https://senat.fichedepute.fr/methode");
   const meta = await STD.getJSON("/api/meta");
   const d = meta.generatedAt ? new Date(meta.generatedAt).toLocaleDateString(STD.lang, { year: "numeric", month: "long", day: "numeric" }) : "—";
   root.innerHTML = `<section class="block fade-in"><div class="wrap">
