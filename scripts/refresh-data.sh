@@ -25,6 +25,12 @@ if [ "${WITH_QUESTIONS:-0}" = "1" ]; then
   curl -fsSL --http1.1 -o "$TMP/questions.zip" "https://data.senat.fr/data/questions/questions.zip"
   unzip -qo "$TMP/questions.zip" -d pipeline/raw-senat
 fi
+# Amendements (AMELI) base is heavy (~146 MB). Set WITH_AMENDEMENTS=1.
+if [ "${WITH_AMENDEMENTS:-0}" = "1" ]; then
+  echo "· downloading amendements (AMELI) base …"
+  curl -fsSL --http1.1 -o "$TMP/ameli.zip" "https://data.senat.fr/data/ameli/ameli.zip"
+  unzip -qoj "$TMP/ameli.zip" -d pipeline/raw-senat
+fi
 echo "· rebuilding activity data …"
 python3 pipeline/build_activite.py
 echo "✓ data refreshed"
