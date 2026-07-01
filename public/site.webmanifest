@@ -1,0 +1,13 @@
+{
+  "name": "FicheSénateur.fr",
+  "short_name": "FicheSénateur",
+  "description": "La fiche vivante de votre sénateur·rice au Sénat.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fb",
+  "theme_color": "#000091",
+  "icons": [
+    { "src": "https://assets.zlef.fr/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "https://assets.zlef.fr/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

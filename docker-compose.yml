@@ -1,0 +1,11 @@
+services:
+  fichesenat:
+    build: .
+    container_name: fichesenat
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PORT=10097
+      - VAR_DIR=/app/var
+    volumes:
+      - ./var:/app/var

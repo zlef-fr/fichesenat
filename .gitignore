@@ -1,0 +1,5 @@
+# heavy raw open-data snapshot — re-fetched via scripts/refresh-data.sh
+pipeline/raw-senat/
+node_modules/
+*.log
+var/

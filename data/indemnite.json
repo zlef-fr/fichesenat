@@ -1,0 +1,16 @@
+{
+  "asOf": "2025",
+  "source": "https://www.senat.fr/role/indemnite.html",
+  "note": "Indemnité parlementaire, identique pour les 348 sénateurs (hors suppléments de fonction : Président, questeurs, vice-présidents, présidents de commission).",
+  "brutMensuel": 7637.39,
+  "netMensuel": 5953.34,
+  "composition": [
+    { "libelle": "Indemnité de base", "montant": 5931.95 },
+    { "libelle": "Indemnité de résidence", "montant": 177.96 },
+    { "libelle": "Indemnité de fonction", "montant": 1527.48 }
+  ],
+  "moyens": [
+    { "libelle": "Avance de frais de mandat (AFM)", "montant": 6037 },
+    { "libelle": "Crédit collaborateurs", "montant": 8949 }
+  ]
+}
