@@ -16,6 +16,15 @@ echo "· downloading Dosleg dump …"
 curl -fsSL --http1.1 -o "$TMP/dosleg.zip" "$DOSLEG"
 unzip -qo "$TMP/dosleg.zip" -d pipeline/raw-senat
 
-echo "· rebuilding data …"
+echo "· rebuilding core data …"
 python3 pipeline/build_senat.py
+
+# Questions base is heavy (~268 MB). Set WITH_QUESTIONS=1 to refresh senator activity.
+if [ "${WITH_QUESTIONS:-0}" = "1" ]; then
+  echo "· downloading questions base (~268 MB) …"
+  curl -fsSL --http1.1 -o "$TMP/questions.zip" "https://data.senat.fr/data/questions/questions.zip"
+  unzip -qo "$TMP/questions.zip" -d pipeline/raw-senat
+fi
+echo "· rebuilding activity data …"
+python3 pipeline/build_activite.py
 echo "✓ data refreshed"
