@@ -118,15 +118,15 @@ V.list = async (root) => {
   setMeta(t("list.title") + " — FicheSénateur.fr", t("meta.sub"), "https://senat.fichedepute.fr/deputes");
   const { deputes } = await STD.getJSON("/api/deputes");
   const groups = [...new Set(deputes.map((d) => d.groupe))].sort();
-  const deps = [...new Map(deputes.filter((d) => d.dep).map((d) => [d.dep, d.depNom])).entries()]
-    .sort((a, b) => a[0].localeCompare(b[0], "fr", { numeric: true }));
+  // senators have no dep number — filter by the département label (depNom)
+  const deps = [...new Set(deputes.map((d) => d.depNom).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fr"));
 
   root.innerHTML = `<section class="block fade-in"><div class="wrap">
     <div class="sec-head"><h2>${esc(t("list.title"))}</h2></div>
     <div class="filters">
       <input id="f-q" type="search" placeholder="${esc(t("search.placeholder"))}" style="flex:1;min-width:200px">
       <select id="f-g"><option value="">${esc(t("list.filter.group"))}</option>${groups.map((g) => `<option value="${esc(g)}">${esc(g)}</option>`).join("")}</select>
-      <select id="f-d"><option value="">${esc(t("list.filter.dep"))}</option>${deps.map(([n, l]) => `<option value="${esc(n)}">${esc(n)} · ${esc(l)}</option>`).join("")}</select>
+      <select id="f-d"><option value="">${esc(t("list.filter.dep"))}</option>${deps.map((l) => `<option value="${esc(l)}">${esc(l)}</option>`).join("")}</select>
       <select id="f-s">
         <option value="name">${esc(t("list.sort.name"))}</option>
         <option value="pd">${esc(t("list.sort.presence_desc"))}</option>
@@ -144,7 +144,7 @@ V.list = async (root) => {
     const q = norm(fq.value.trim());
     let arr = deputes.filter((d) =>
       (!fg.value || d.groupe === fg.value) &&
-      (!fd.value || d.dep === fd.value) &&
+      (!fd.value || d.depNom === fd.value) &&
       (!q || norm(`${d.prenom} ${d.nom} ${d.depNom}`).includes(q)));
     if (fs.value === "pd") arr = arr.slice().sort((a, b) => b.presence - a.presence);
     else if (fs.value === "pa") arr = arr.slice().sort((a, b) => a.presence - b.presence);
