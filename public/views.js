@@ -122,7 +122,7 @@ V.list = async (root) => {
   const deps = [...new Set(deputes.map((d) => d.depNom).filter(Boolean))].sort((a, b) => a.localeCompare(b, "fr"));
 
   root.innerHTML = `<section class="block fade-in"><div class="wrap">
-    <div class="sec-head"><h2>${esc(t("list.title"))}</h2></div>
+    <div class="sec-head"><h1>${esc(t("list.title"))}</h1></div>
     <div class="filters">
       <input id="f-q" type="search" placeholder="${esc(t("search.placeholder"))}" style="flex:1;min-width:200px">
       <select id="f-g"><option value="">${esc(t("list.filter.group"))}</option>${groups.map((g) => `<option value="${esc(g)}">${esc(g)}</option>`).join("")}</select>
@@ -312,7 +312,7 @@ V.rankings = async (root) => {
         <span class="val" style="color:${colorMode === "group" ? esc(d.groupeColor) : STD.presenceColor(d[field])}">${d[field].toFixed(1)}%</span></a>`).join("")}</div>
     </div>`;
   root.innerHTML = `<section class="block fade-in"><div class="wrap">
-    <div class="sec-head"><h2>${esc(t("rank.title"))}</h2></div>
+    <div class="sec-head"><h1>${esc(t("rank.title"))}</h1></div>
     <div class="grid-2">
       <div>${tbl(t("rank.assidus"), stats.plusAssidus, "presence")}</div>
       <div>${tbl(t("rank.absents"), stats.plusAbsents, "presence")}</div>
@@ -485,7 +485,7 @@ V.groups = async (root) => {
   setMeta(t("groups.title") + " — FicheSénateur.fr", t("meta.sub"), "https://senat.fichedepute.fr/groupes");
   const { groupes } = await STD.getJSON("/api/groupes");
   root.innerHTML = `<section class="block fade-in"><div class="wrap">
-    <div class="sec-head"><h2>${esc(t("groups.title"))}</h2></div>
+    <div class="sec-head"><h1>${esc(t("groups.title"))}</h1></div>
     <div class="grp-grid">
       ${groupes.slice().sort((a, b) => b.n - a.n).map((g) => `
         <div class="card grp-card" style="border-left-color:${esc(g.color)}">
