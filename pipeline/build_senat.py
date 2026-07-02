@@ -155,9 +155,15 @@ for mat, s in senators.items():
         d = scr[key]["date"]
         if d and (first_date is None or d < first_date):
             first_date = d
-        s["nPresent"] += 1
         s["n" + {"pour": "Pour", "contre": "Contre", "abstention": "Abstention", "nonVotant": "NonVotant"}[pos]] += 1
+        # Every senator is listed in every scrutin (as pour/contre/abstention OR
+        # non-votant), so counting non-votant as "present" gives a meaningless
+        # ~100% for everyone. In the Sénat "non-votant" = n'a pas pris part au
+        # vote = effectively absent (voted neither in person nor by delegation),
+        # so — like the EP DID_NOT_VOTE — only expressed votes count as present.
+        # This makes presenceRate == participationRate = the real vote-exprimé rate.
         if pos in ("pour", "contre", "abstention"):
+            s["nPresent"] += 1
             maj = majority.get((key, s["groupeSigle"]))
             if maj:
                 s["nGroupExpr"] += 1
