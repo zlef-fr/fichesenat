@@ -208,7 +208,8 @@ V.fiche = async (root, m) => {
       </div>
 
       <div class="gauges">
-        ${STD.ring(d.presenceRate, STD.presenceColor(d.presenceRate), t("fiche.participation"), t("fiche.of", { n: d.nEligible }))}
+        ${STD.ring(d.presenceRate, STD.presenceColor(d.presenceRate), t("fiche.presence.ring"), t("fiche.of", { n: d.nEligible }))}
+        ${STD.ring(d.participationRate, STD.presenceColor(d.participationRate), t("fiche.participation"), t("fiche.exprime.sub", { n: (d.nExprimes != null ? d.nExprimes : 0).toLocaleString(STD.lang) }))}
         ${d.loyaltyRate != null ? STD.ring(d.loyaltyRate, g.color, t("fiche.loyalty"), t("fiche.loyalty.sub", { g: g.sigle })) : ""}
         <div class="votes-split" style="align-self:center">
           <div class="vsplit pour"><b>${d.nPour}</b><span>${esc(t("fiche.pour"))}</span></div>
@@ -504,12 +505,22 @@ V.groups = async (root) => {
 // ── METHODO ───────────────────────────────────────────────────────────────
 V.methodo = async (root) => {
   setMeta(t("methodo.title") + " — FicheSénateur.fr", t("meta.sub"), "https://senat.fichedepute.fr/methode");
-  const meta = await STD.getJSON("/api/meta");
+  const [meta, faq] = await Promise.all([STD.getJSON("/api/meta"), STD.getJSON("/api/faq").catch(() => ({}))]);
   const d = meta.generatedAt ? new Date(meta.generatedAt).toLocaleDateString(STD.lang, { year: "numeric", month: "long", day: "numeric" }) : "—";
+  const items = (faq[STD.lang] || faq.fr || []);
+  const faqHtml = items.length ? `
+    <h2 class="faq-title">${esc(t("methodo.faqTitle"))}</h2>
+    <div class="faq">
+      ${items.map((x) => `<details class="faq-item">
+        <summary>${esc(x.q)}</summary>
+        <div class="faq-a">${x.a}</div>
+      </details>`).join("")}
+    </div>` : "";
   root.innerHTML = `<section class="block fade-in"><div class="wrap">
     <div class="prose">
       <h1>${esc(t("methodo.title"))}</h1>
       <p>${t("methodo.body")}</p>
+      ${faqHtml}
       <p class="upd">${esc(t("methodo.updated", { d }))}</p>
     </div>
   </div></section>`;
