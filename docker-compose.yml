@@ -6,6 +6,7 @@ services:
     network_mode: host
     environment:
       - PORT=10097
+      - SITE_BRAND=senat
       - VAR_DIR=/app/var
     volumes:
       - ./var:/app/var
