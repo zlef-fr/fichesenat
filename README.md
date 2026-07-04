@@ -1,5 +1,7 @@
 # FicheSénateur.fr
 
+![views](https://assets.zlef.fr/badge/views/zlef-fr/fichesenat.svg)
+
 La **fiche vivante** de chaque sénateur·rice — participation aux scrutins, votes,
 loyauté au groupe — en clair et 100 % sourcé. Site jumeau de
 [FicheDéputé.fr](https://fichedepute.fr) pour la chambre haute.
